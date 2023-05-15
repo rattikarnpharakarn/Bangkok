@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -24,4 +24,91 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+/* .app{
+  background-color: var(--backgrond);
+} */
+
+.bg-img {
+  background-image: url("./public/images/a.jpg");
+  height: 600vh;
+  max-height: 460px;
+}
+.bg-img-a {
+  background-image: url("./public/images/b.jpg");
+  height: 600vh;
+  max-height: 460px;
+}
+.Container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+
+.Container-dark {
+  background-color: #000;
+}
+
+.Container-light {
+  background-color: rgb(216, 216, 216);
+}
+
+/* .bg-black {
+  background-color: black;
+}
+.bg-red {
+  background-color: red;
+} */
+
+.app {
+  position: relative;
+  background-color: var(--background);
+}
+
+.app__main {
+  /* position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%; */
+  height: 25%;
+  background-color: var(--background);
+}
+.app {
+  position: relative;
+  background-color: var(--background);
+  /* color: var(--red); */
+}
+
+.app__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+.app__bg img {
+  width: 100%;
+  background-size: cover;
+}
+
+.is-invalid {
+  border-color: red;
+}
+.invalid-feedback {
+  color: red;
+}
+.valid-feedback {
+  color: green;
+}
+
+.ellipse {
+  overflow: hidden;
+  white-space: nowrap;
 }
