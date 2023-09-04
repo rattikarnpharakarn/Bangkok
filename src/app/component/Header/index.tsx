@@ -19,7 +19,7 @@ import Link from 'next/link';
 
 
 const Header = () => {
-    const login = sessionStorage.getItem("login");
+    // const login = sessionStorage.getItem("login");
     const [show, setShow] = useState(false);
 
 
@@ -29,7 +29,7 @@ const Header = () => {
 
     return (
         <>
-            {!login ?
+      
                 <Carousel className="rounded-xl">
                     <div className=" h-3/6 w-full">
                         <img
@@ -146,7 +146,7 @@ const Header = () => {
                         </div>
                     </div>
                 </Carousel>
-                :
+                {/* :
                 <Carousel transition={{ duration: 2 }} autoplay className="rounded-xl w-full h-1/4" >
                     <div className=" h-2/6 w-full">
                         <img
@@ -215,7 +215,7 @@ const Header = () => {
                         className="h-1/4 w-full object-cover"
                     />
                 </Carousel>
-            }
+           */}
             {show && <Login onClose={onClose} />}
         </>
     );

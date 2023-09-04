@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-
+import axios from 'axios';
 
 
 type UserSubmitForm = {
@@ -27,20 +27,9 @@ const Login = (props: any) => {
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
-      .required('Username is required')
-      .min(10, 'Enter a phone number of at min 10 characters.')
-      .max(10, 'Enter a phone number of at max 10 characters.')
-      .matches(phoneRegExp, 'กรอกเบอร์โทรศัพท์ที่ขึ้นต้นขึ้นต้นด้วย 06,08,09 เท่านั้น'),
+      .required('Username is required'),
     password: Yup.string()
-      .required('Password is required')
-      .matches(
-        /^([A-Z]{1})(?=.*[A-za-z0-9])/,
-        "Must the start of a word is Uppercase, One Uppercase, One Lowercase and Only English letter"
-      )
-      .matches(
-        nameRegexEn,
-        "Only English letter"
-    ),
+      .required('Password is required'),
   });
 
   const [user, setUserName] = useState<any>(sessionStorage.getItem("user"));
@@ -53,27 +42,41 @@ const Login = (props: any) => {
     resolver: yupResolver(validationSchema)
   });
 
-  const onSubmit = (data: UserSubmitForm) => {
-    const users = JSON.parse(user)
-    JSON.parse(user)
-    if ((users?.username === data.username) && (users?.password === data.password)) {
-      setMessage(true)
-      setTimeout(() => {
-        if (pathname === '/pages/register') {
-          router.push('/pages/');
-        } else {
-          location.reload()
-        }
-      }, 1000);
-      sessionStorage.setItem('login', 'login')
-    } else if ((users?.username != data.username.toString()) || (users?.password != data.password.toString())) {
-      setMessage(false)
+  const onSubmit = async (data: UserSubmitForm) => {
+    console.log(data, 'data')
+    try{
+      const response = await axios.post('api/login', {
+        username: data.username,
+        password: data.password
+      })
+      .then(function (res:any) {
+        console.log(response);
+      })
+      .catch(function (res:any) {
 
+      });
+    // your logic
+    }catch(err){
+      console.log(err)
     }
-    else {
-      setMessage(false)
-      setData(undefined);
-    }
+    // if ((users?.username === data.username) && (users?.password === data.password)) {
+    //   setMessage(true)
+    //   setTimeout(() => {
+    //     if (pathname === '/pages/register') {
+    //       router.push('/pages/');
+    //     } else {
+    //       location.reload()
+    //     }
+    //   }, 1000);
+    //   sessionStorage.setItem('login', 'login')
+    // } else if ((users?.username != data.username.toString()) || (users?.password != data.password.toString())) {
+    //   setMessage(false)
+
+    // }
+    // else {
+    //   setMessage(false)
+    //   setData(undefined);
+    // }
   };
 
 
@@ -121,7 +124,7 @@ const Login = (props: any) => {
               <form className="space-y-6 invalid-feedback" action="#" onSubmit={handleSubmit(onSubmit)}>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your username</label>
-                  <input type="number"
+                  <input type="text"
                     id="username" placeholder="Username"
                     {...register('username')}
                     className={` shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.username ? 'is-invalid' : ''}`} />
