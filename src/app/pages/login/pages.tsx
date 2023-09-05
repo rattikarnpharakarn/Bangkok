@@ -43,18 +43,14 @@ const Login = (props: any) => {
   });
 
   const onSubmit = async (data: UserSubmitForm) => {
-    console.log(data, 'data')
+    // console.log(data, 'data')
     try{
-      const response = await axios.post('api/login', {
+      const response = await axios.post('http://localhost:3000/suggest-system-api/api/v1/auth/login', {
         username: data.username,
         password: data.password
       })
-      .then(function (res:any) {
-        console.log(response);
-      })
-      .catch(function (res:any) {
-
-      });
+      // console.log(response, 'response')
+      // console.log(response)
     // your logic
     }catch(err){
       console.log(err)

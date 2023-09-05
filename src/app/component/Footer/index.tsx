@@ -106,7 +106,6 @@ const Footer = () => {
                         alt="image 14"
                         className="h-1/4 w-full object-cover"
                     />
-
                 </Carousel>
             </div>
 

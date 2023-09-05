@@ -21,19 +21,19 @@ import Cover_6 from '../../public/images/cover_6.jpg'
 import Cover_7 from '../../public/images/markets.jpg'
 import Watcover from '../../public/images/wat_cover.jpg'
 import Bacc from '../../public/images/bacc.jpg'
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import axios from 'axios';
 
 
 
 
 type UserSubmitForm = {
-    fname: string;
-    lname: string;
+    firstName: string;
+    lastName: string;
     username: string;
     password: string;
-    cfpassword: string;
-    bankaccount: string;
-    bankaccountnumber: string;
+    confirmPassword: string;
+    email: string;
 };
 
 
@@ -44,57 +44,34 @@ const Page = (props: any) => {
     const nameRegexEn = /^[A-za-z0-9]+$/;
     const phoneRegExp = /^(0[6,8,9]{1,2}[0-9]{3,10})$/
 
-
     const validationSchema = Yup.object().shape({
         checkLangTh: Yup.boolean(),
         checkLangEn: Yup.boolean(),
 
-        fname: Yup.string()
+        firstName: Yup.string()
             .required('Firstname is required'),
 
-
-        lname: Yup.string()
-            .required('Lastname is required')
-            .when('fname', {
-                is: (checkLangEn: string) => checkLangEn,
-                then: schema => schema.matches(nameRegexEn, "Only English letters").required("Required *"),
-            }),
+        lastName: Yup.string()
+            .required('Lastname is required'),
 
         username: Yup.string()
-            .required('Username is required')
-            .min(10, 'Enter a phone number of at min 10 characters.')
-            .max(10, 'Enter a phone number of at max 10 characters.')
-            .matches(phoneRegExp, 'กรอกเบอร์โทรศัพท์ไม่น้อยกว่า 10 ตัว ขึ้นต้นด้วย 06,08,09 เท่านั้น'),
-
+            .required('Username is required'),
+         
         password: Yup.string()
-            .required('Password is required')
-            .matches(
-                /^([A-Z]{1})(?=.*[A-za-z0-9])/,
-                "Must the start of a word is Uppercase, One Uppercase, One Lowercase and Only English letter"
-            )
-            .matches(
-                nameRegexEn,
-                "Only English letter"
-            ),
-        cfpassword: Yup.string()
+            .required('Password is required'),
+
+        confirmPassword: Yup.string()
             .required('Password is required')
             .oneOf([Yup.ref('password')], 'Passwords must match'),
 
-        bankaccount: Yup.string()
-            .required('Bank Account is required'),
-
-        bankaccountnumber: Yup.string()
-            .required('Bank account number is required')
-            .min(10, 'Enter a phone number of at min 10 characters.')
-            .max(10, 'Enter a phone number of at max 10 characters.')
+        email: Yup.string().email()
+            .required('email is required')
 
     });
 
     const goToHomepage = () => {
         router.push('/');
     }
-
-
 
     const {
         register,
@@ -105,20 +82,27 @@ const Page = (props: any) => {
         resolver: yupResolver(validationSchema)
     });
 
-    const onSubmit = (data: UserSubmitForm) => {
-        console.log(JSON.stringify(data, null, 2));
-        data = {
-            fname: data.fname,
-            lname: data.lname,
+    const onSubmit = async (data: UserSubmitForm) => {
+        // console.log(JSON.stringify(data, null, 2));
+        const body = {
+            firstName: data.firstName,
+            lastName: data.lastName,
             username: data.username,
             password: data.password,
-            cfpassword: data.cfpassword,
-            bankaccount: data.bankaccount,
-            bankaccountnumber: data.bankaccountnumber,
+            email: data.email,
         }
-        sessionStorage.setItem('user', JSON.stringify(data));
-        setAlert(true);
-        sessionStorage.setItem('login', 'login')
+    try {
+        const response = await axios.post("http://localhost:3000/suggest-system-api/api/v1/users", body);
+        if (response.status === 200) {
+         console.log('successin')
+         redirect('/')
+        } else {
+         console.log('uuu')
+          throw new Error("Failed to complete the process");
+        }
+      } catch (error) {
+        console.error(error, 'error');
+      }
 
     };
 
@@ -128,7 +112,6 @@ const Page = (props: any) => {
 
     return (
         <>
- 
                 <div className={show ? 'bg-white font-family-karla h-screen opacity-25' : 'bg-white font-family-karla h-screen'}>
                     {alert &&
                         <div
@@ -166,27 +149,26 @@ const Page = (props: any) => {
                                     <div className="flex flex-col pt-4">
                                         <label className="text-lg">First name</label>
                                         <input type="text" placeholder="First name"
-                                            {...register('fname')}
-                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.fname ? 'is-invalid' : ''}`} />
+                                            {...register('firstName')}
+                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.firstName ? 'is-invalid' : ''}`} />
 
-                                        <div className="invalid-feedback">{errors.fname?.message}</div>
+                                        <div className="invalid-feedback">{errors.firstName?.message}</div>
                                     </div>
 
                                     <div className="flex flex-col pt-4">
                                         <label className="text-lg">Last name</label>
                                         <input type="text" placeholder="Last name"
-                                            {...register('lname')}
-                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.lname ? 'is-invalid' : ''}`} />
+                                            {...register('lastName')}
+                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.lastName ? 'is-invalid' : ''}`} />
 
-                                        <div className="invalid-feedback">{errors.lname?.message}</div>
+                                        <div className="invalid-feedback">{errors.lastName?.message}</div>
                                     </div>
 
                                     <div className="flex flex-col pt-4">
                                         <label className="text-lg">Username</label>
-                                        <input type="number" placeholder="phonenumber"
+                                        <input type="text" placeholder="phonenumber"
                                             {...register('username')}
                                             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.username ? 'is-invalid' : ''}`} />
-
                                         <div className="invalid-feedback">{errors.username?.message}</div>
                                     </div>
 
@@ -195,48 +177,28 @@ const Page = (props: any) => {
                                         <input type="password" id="password" placeholder="Password"
                                             {...register('password')}
                                             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.password ? 'is-invalid' : ''}`} />
-
                                         <div className="invalid-feedback">{errors.password?.message}</div>
                                     </div>
 
                                     <div className="flex flex-col pt-4">
                                         <label className="text-lg">Confirm Password</label>
                                         <input type="password" id="confirm-password" placeholder="Confirm password"
-                                            {...register('cfpassword')}
-                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.cfpassword ? 'is-invalid' : ''}`} />
-
-                                        <div className="invalid-feedback">{errors.cfpassword?.message}</div>
+                                            {...register('confirmPassword')}
+                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.confirmPassword ? 'is-invalid' : ''}`} />
+                                        <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
                                     </div>
 
                                     <div className="flex flex-col pt-4">
-                                        <label className="text-lg">Bank Account</label>
-
-                                        <div className="relative w-full lg:max-w-sm">
-                                            <select placeholder="Bank Account"
-                                                {...register('bankaccount')}
-                                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.bankaccount ? 'is-invalid' : ''}`} >
-                                                <option>กรุงเทพ</option>
-                                                <option>กสิกร</option>
-                                                <option>ไทยพาณิช</option>
-                                            </select>
-                                        </div>
-                                        <div className="invalid-feedback">{errors.bankaccount?.message}</div>
-
-                                    </div>
-
-                                    <div className="flex flex-col pt-4">
-                                        <label className="text-lg">Bank Account number</label>
-                                        <input type="number" placeholder="681 1 00109 9"
-                                            {...register('bankaccountnumber')}
-                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.bankaccountnumber ? 'is-invalid' : ''}`} />
-
-                                        <div className="invalid-feedback">{errors.bankaccountnumber?.message}</div>
+                                        <label className="text-lg">email</label>
+                                        <input type="text" id="email" placeholder="email"
+                                            {...register('email')}
+                                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline ${errors.confirmPassword ? 'is-invalid' : ''}`} />
+                                        <div className="invalid-feedback">{errors.email?.message}</div>
                                     </div>
 
                                     <button type="submit" className="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8">
                                         Sign up
                                     </button>
-
                                 </form>
 
                             </div>
